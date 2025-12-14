@@ -1,14 +1,17 @@
 # Hospital Management API
 
-A FastAPI-based RESTful API for managing hospitals with batch processing support.
+A FastAPI-based RESTful API for managing hospitals with advanced batch processing, pagination, and real-time monitoring capabilities.
 
 ## Features
 
 - Individual hospital CRUD operations
-- Batch processing of hospital data via CSV upload
-- Batch activation/deactivation of hospitals
+- Multiple bulk processing endpoints with different strategies
+- Optimized pagination and filtering for large datasets
+- Real-time progress monitoring for bulk operations
+- CSV validation and processing
 - Comprehensive error handling and validation
-- SQLite database (can be easily switched to PostgreSQL/MySQL)
+- SQLite database with optimized queries
+- Polling-based status tracking for bulk operations
 
 ## Prerequisites
 
@@ -20,7 +23,7 @@ A FastAPI-based RESTful API for managing hospitals with batch processing support
 1. Clone the repository:
    ```bash
    git clone <repository-url>
-   cd hospital_api
+   cd hospital
    ```
 
 2. Create a virtual environment and activate it:
@@ -56,15 +59,26 @@ The application uses SQLite by default, which will be automatically created when
 
 ### Individual Hospital Operations
 
-- `POST /api/v1/hospitals/` - Create a new hospital
-- `GET /api/v1/hospitals/` - Get all hospitals
+- `POST /hospitals/` - Create a new hospital
+- `GET /hospitals/` - Get all hospitals with pagination
+- `GET /hospitals/{hospital_id}` - Get a specific hospital
+- `PUT /hospitals/{hospital_id}` - Update a hospital
+- `DELETE /hospitals/{hospital_id}` - Delete a hospital
 
-### Batch Operations
+### Optimized Hospital Operations
 
-- `POST /api/v1/hospitals/bulk` - Bulk create hospitals from CSV
-- `GET /api/v1/hospitals/batch/{batch_id}` - Get hospitals by batch ID
-- `PATCH /api/v1/hospitals/batch/{batch_id}/activate` - Activate all hospitals in a batch
-- `DELETE /api/v1/hospitals/batch/{batch_id}` - Delete all hospitals in a batch
+- `GET /hospitals/optimized/` - Get hospitals with advanced filtering, sorting, and pagination
+- `POST /hospitals/optimized/bulk` - Optimized bulk creation with direct database operations
+- `GET /hospitals/optimized/stats` - Get comprehensive hospital statistics
+
+### Bulk Operations with Real-time Monitoring
+
+- `POST /hospitals/bulk/big_file` - Bulk create hospitals with configurable delays for real-time monitoring
+- `GET /hospitals/bulk/status/{batch_id}` - Get comprehensive progress information for bulk operations
+
+### CSV Validation
+
+- `POST /validation/validate-csv` - Validate CSV file format and content before processing
 
 ## Bulk Upload CSV Format
 
@@ -80,9 +94,54 @@ General Hospital,123 Main St,555-1234
 City Medical,456 Oak Ave,555-5678
 ```
 
+## Advanced Features
+
+### Pagination and Filtering
+The optimized endpoints support:
+- Page-based pagination (default: 50 records per page)
+- Search by hospital name
+- Filter by active/inactive status
+- Sort by various fields (name, created_at, updated_at)
+- Filter by batch ID
+
+### Real-time Bulk Processing
+The `/hospitals/bulk/big_file` endpoint provides:
+- Configurable sleep duration between records (0-5 seconds)
+- Real-time progress tracking in database
+- Detailed error reporting
+- Polling-based status updates via `/hospitals/bulk/status/{batch_id}`
+
+### Environment Variables
+- `MAX_CSV_ROWS`: Maximum number of rows allowed in CSV uploads (default: 20)
+
 ## Testing
 
 You can test the API using the interactive documentation at `http://localhost:8000/docs` or using tools like curl or Postman.
+
+### Example Usage
+
+1. **Create individual hospital:**
+   ```bash
+   curl -X POST "http://localhost:8000/hospitals/" \
+   -H "Content-Type: application/json" \
+   -d '{"name": "Test Hospital", "address": "123 Test St", "phone": "555-1234"}'
+   ```
+
+2. **Bulk upload with real-time monitoring:**
+   ```bash
+   curl -X POST "http://localhost:8000/hospitals/bulk/big_file?sleep_duration=1" \
+   -F "file=@hospitals.csv"
+   ```
+
+3. **Check bulk operation status:**
+   ```bash
+   curl "http://localhost:8000/hospitals/bulk/status/{batch_id}"
+   ```
+
+4. **Get paginated hospitals with filtering:**
+   ```bash
+   curl "http://localhost:8000/hospitals/optimized/?page=1&size=10&search=General&active_only=true"
+   ```
 
 ## Deployment
 
@@ -91,6 +150,7 @@ For production deployment, consider:
 2. Configuring a production database (PostgreSQL/MySQL)
 3. Setting up proper environment variables for sensitive information
 4. Implementing proper authentication/authorization
+5. Using Docker containers for consistent deployment
 
 ## License
 
