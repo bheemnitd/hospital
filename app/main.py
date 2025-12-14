@@ -3,8 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from . import models, schemas
 from .database import engine, get_db
 from .routers import hospitals
-
-# Create database tables
+from .routers import hospitals_optimized
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -13,7 +12,6 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -25,9 +23,9 @@ app.add_middleware(
 async def health_check():
     return {"status": "ok"}
 
-# Include routers
 app.include_router(hospitals.router, prefix="")
 
+app.include_router(hospitals_optimized.router, prefix="", tags=["Optimized Hospitals Directory"])
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

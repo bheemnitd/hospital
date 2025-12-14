@@ -1,6 +1,5 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, func, ForeignKey
-from sqlalchemy.dialects.postgresql import UUID
-import uuid
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, JSON, Index
+from sqlalchemy.sql import func
 from .database import Base
 
 class Hospital(Base):
@@ -13,6 +12,11 @@ class Hospital(Base):
     creation_batch_id = Column(String, index=True, nullable=False)
     active = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    __table_args__ = (
+        Index('idx_batch_active', 'creation_batch_id', 'active'),
+        Index('idx_name_active', 'name', 'active'),
+    )
 
     def to_dict(self):
         return {
