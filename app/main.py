@@ -5,7 +5,6 @@ from .database import engine, get_db
 from .routers import hospitals
 from .routers import hospitals_optimized
 from .routers import validation
-from .routers import resume
 from .routers import bulk_realtime
 models.Base.metadata.create_all(bind=engine)
 
@@ -29,8 +28,7 @@ async def health_check():
 app.include_router(hospitals.router, prefix="")
 app.include_router(hospitals_optimized.router, prefix="", tags=["Optimized Hospitals Directory"])
 app.include_router(validation.router, prefix="", tags=["CSV Validation"])
-app.include_router(resume.router, prefix="", tags=["Resume Operations"])
-app.include_router(bulk_realtime.router, prefix="", tags=["Real-time Bulk Operations"])
+app.include_router(bulk_realtime.router, prefix="", tags=["Polling Bulk Operations"])
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

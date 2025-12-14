@@ -24,7 +24,7 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/hospitals/bulk/realtime", response_model=schemas.BulkCreateResponse)
+@router.post("/hospitals/bulk/big_file", response_model=schemas.BulkCreateResponse)
 async def bulk_create_hospitals_realtime(
     file: UploadFile = File(...),
     sleep_duration: float = 0.5,
@@ -237,7 +237,7 @@ async def process_hospitals_with_sleep(
     finally:
         db.close()
 
-@router.get("/hospitals/bulk/realtime/{batch_id}")
+@router.get("/hospitals/bulk/status/{batch_id}")
 def get_bulk_operation_progress(batch_id: str, db: Session = Depends(get_db)):
     """Get comprehensive progress information for bulk operation"""
     operation = db.query(models.BulkOperation).filter(models.BulkOperation.id == batch_id).first()
