@@ -5,9 +5,5 @@ sqlalchemy==2.0.45
 pandas==2.3.3
 pydantic==2.12.5
 python-multipart==0.0.20
+httpx==0.28.1
 
-# Remove development dependencies
-# The following are not needed in production:
-# - annotated-doc, annotated-types, anyio, certifi, click, colorama
-# - greenlet, h11, httpcore, httpx, idna, numpy, python-dateutil
-# - pytz, six, starlette, typing-inspection, typing_extensions, tzdata
